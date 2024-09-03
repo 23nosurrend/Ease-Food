@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import './login.dart';
+import '../main.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 class Signup extends StatefulWidget {
   const Signup({super.key});
@@ -9,6 +11,42 @@ class Signup extends StatefulWidget {
 }
 
 class _SignupState extends State<Signup> {
+  final emailController = TextEditingController();
+  final passwordontroller = TextEditingController();
+  Future<void> signup() async {
+    try {
+      if (emailController.text.isEmpty || passwordontroller.text.isEmpty) {
+        showDialog(
+            context: context,
+            builder: (context) {
+              return AlertDialog(content: Text('Please Enter all inputs'));
+            });
+        return;
+      }
+      final AuthResponse res = await supabase.auth.signUp(
+        email: emailController.text,
+        password: passwordontroller.text,
+      );
+      final Session? session = res.session;
+      final User? user = res.user;
+
+      if (user != null) {
+        showDialog(
+            context: context,
+            builder: (context) {
+              return AlertDialog(content: Text('user created succesfully'));
+            });
+      }
+    } catch (error) {
+      showDialog(
+          context: context,
+          builder: (content) {
+            return AlertDialog(content: Text('Error: ${error.toString()}'));
+          });
+      print(error);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -50,7 +88,7 @@ class _SignupState extends State<Signup> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Text(
-                      'Alredy have an account',
+                      'Already have an account',
                       style: TextStyle(
                           color: Colors.black,
                           fontSize: 20,
@@ -81,17 +119,19 @@ class _SignupState extends State<Signup> {
                   ],
                 ),
                 const SizedBox(height: 60),
-                const SizedBox(
+                SizedBox(
                   width: 350,
                   child: TextField(
+                    controller: emailController,
                     decoration: InputDecoration(
                         border: OutlineInputBorder(), labelText: 'Email'),
                   ),
                 ),
                 const SizedBox(height: 60),
-                const SizedBox(
+                SizedBox(
                   width: 350,
                   child: TextField(
+                    controller: passwordontroller,
                     decoration: InputDecoration(
                         border: OutlineInputBorder(), labelText: 'Password'),
                   ),
@@ -106,7 +146,9 @@ class _SignupState extends State<Signup> {
                             backgroundColor: WidgetStateProperty.all<Color>(
                                 const Color(0xff633631)),
                           ),
-                          onPressed: () {},
+                          onPressed: () {
+                            signup();
+                          },
                           child: const Text("Sign Up",
                               style: TextStyle(
                                   color: Colors.white,
