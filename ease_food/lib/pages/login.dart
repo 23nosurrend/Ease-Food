@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import './home.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
+import '../main.dart';
+import './signup.dart';
 
 class Login extends StatefulWidget {
   const Login({super.key});
@@ -9,6 +12,39 @@ class Login extends StatefulWidget {
 }
 
 class _LoginState extends State<Login> {
+  final emailController = TextEditingController();
+  final passwordController = TextEditingController();
+  Future<void> Login() async {
+    try {
+      if (emailController.text.isEmpty || passwordController.text.isEmpty) {
+        showDialog(
+            context: context,
+            builder: (context) {
+              return AlertDialog(content: Text('Please Enter all inputs'));
+            });
+        return;
+      }
+      final AuthResponse res = await supabase.auth.signInWithPassword(
+        email: emailController.text,
+        password: passwordController.text,
+      );
+      final Session? session = res.session;
+      final User? user = res.user;
+
+      if (user != null) {
+        showDialog(
+            context: context,
+            builder: (context) {
+              return AlertDialog(content: Text('Logged in Successfully'));
+            });
+        Navigator.pushReplacement(
+            context, MaterialPageRoute(builder: (context) => HomePage()));
+      }
+    } catch (error) {
+      print(error);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -64,7 +100,10 @@ class _LoginState extends State<Login> {
                   children: [
                     GestureDetector(
                       onTap: () {
-                        print('you want to sign up');
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => const Signup()));
                       },
                       child: const Text(
                         'Sign Up',
@@ -78,17 +117,19 @@ class _LoginState extends State<Login> {
                   ],
                 ),
                 const SizedBox(height: 60),
-                const SizedBox(
+                SizedBox(
                   width: 350,
                   child: TextField(
+                    controller: emailController,
                     decoration: InputDecoration(
                         border: OutlineInputBorder(), labelText: 'Email'),
                   ),
                 ),
                 const SizedBox(height: 60),
-                const SizedBox(
+                SizedBox(
                   width: 350,
                   child: TextField(
+                    controller: passwordController,
                     decoration: InputDecoration(
                         border: OutlineInputBorder(), labelText: 'Password'),
                   ),
@@ -104,6 +145,7 @@ class _LoginState extends State<Login> {
                                 const Color(0xff633631)),
                           ),
                           onPressed: () {
+                            // Login();
                             Navigator.push(
                                 context,
                                 MaterialPageRoute(

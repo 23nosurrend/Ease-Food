@@ -24,8 +24,8 @@ class DietModal {
 
     diets.add(
       DietModal(
-          name: 'meat',
-          iconPath: 'assets/meat.jpeg',
+          name: 'Legacy Motel',
+          iconPath: 'assets/resto.png',
           level: 'expensive',
           duration: '30min',
           calorie: '180Kcal',
@@ -36,8 +36,8 @@ class DietModal {
 
     diets.add(
       DietModal(
-          name: 'meat',
-          iconPath: 'assets/meat.jpeg',
+          name: 'Umurishyo Ground',
+          iconPath: 'assets/resto.png',
           level: 'expensive',
           duration: '30min',
           calorie: '180Kcal',
@@ -48,8 +48,8 @@ class DietModal {
 
     diets.add(
       DietModal(
-          name: 'meat',
-          iconPath: 'assets/meat.jpeg',
+          name: 'Gate 10',
+          iconPath: 'assets/resto.png',
           level: 'expensive',
           duration: '30min',
           calorie: '180Kcal',

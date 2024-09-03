@@ -3,6 +3,7 @@ import 'package:ease_food/modals/diet_modal.dart';
 import 'package:ease_food/modals/popular_dietModal.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import './resto.dart';
 
 class HomePage extends StatelessWidget {
   HomePage({super.key});
@@ -24,98 +25,120 @@ class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     getInitialInfo();
-    return Scaffold(
-        appBar: appBar(),
-        backgroundColor: Colors.white,
-        body: ListView(
-          children: [
-            SearchField(),
-            _categories(),
-            const SizedBox(height: 40),
-            _dietSection(),
-            const SizedBox(height: 30),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const Padding(
-                  padding: EdgeInsets.only(left: 10),
-                  child: Text(
-                    'Popular',
-                    style: TextStyle(
-                        color: Colors.black,
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold),
-                  ),
-                ),
-                const SizedBox(height: 15),
-                ListView.separated(
-                    shrinkWrap: true,
-                    padding: const EdgeInsets.only(left: 20, right: 20),
-                    itemBuilder: (context, index) {
-                      return Container(
-                        height: 100,
-                        decoration: BoxDecoration(
-                            color:popularDiets[index].viewIsSelected? Colors.white:Colors.transparent,
-                            borderRadius: BorderRadius.circular(10),
-                            boxShadow: popularDiets[index].viewIsSelected?const [
-                              BoxShadow(
-                                color: Colors.black87,
-                                offset: Offset(0,10),
-                                blurRadius: 40,
-                                spreadRadius: 0
-                                )
-                            ]:[]),
-                            child:Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                              children: [
-                               Image.asset('assets/meat.jpeg',
-                               width:80,
-                               height:80,
-                               fit:BoxFit.cover
-                               ),
-                               Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(popularDiets[index].name,
-                                  style:const TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    color:Colors.black,
-                                    fontSize: 16,
-                                  ),
-                                  
-                                  ),
-                                  Text(
-                                      '${diets[index].level} | ${diets[index].duration} | ${diets[index].calorie}',
-                                  style:const TextStyle(
-                                    fontWeight: FontWeight.normal,
-                                    color:Colors.grey,
-                                    fontSize: 16,
-                                  )
-                                  )
-                                ],
-                               ),
-                               GestureDetector(
-                                onTap:(){
-
-                                },
-                                child:Image.asset('assets/right-arrow.png',
-                                height:20,
-                                width:20
-                                
-                                )
-                               )
-                              ],
-                            )
-                      );
-                    },
-                    separatorBuilder: (context, index) =>
-                        const SizedBox(height: 25),
-                    itemCount: popularDiets.length),
-              ],
+    return DefaultTabController(
+      length: 3,
+      child: Scaffold(
+          appBar: AppBar(),
+          bottomNavigationBar: new TabBar(tabs: [
+            Tab(
+              icon: Icon(Icons.home_max_rounded),
+            ),
+            Tab(
+              icon: Icon(Icons.hotel_class_rounded),
+            ),
+            Tab(
+              icon: Icon(Icons.no_transfer_rounded),
             )
-          ],
-        ));
+          ]),
+          backgroundColor: Colors.white,
+          body: TabBarView(
+            children: [
+              ListView(
+                children: [
+                  SearchField(),
+                  _categories(),
+                  const SizedBox(height: 40),
+                  _dietSection(),
+                  const SizedBox(height: 30),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Padding(
+                        padding: EdgeInsets.only(left: 10),
+                        child: Text(
+                          'Popular',
+                          style: TextStyle(
+                              color: Colors.black,
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold),
+                        ),
+                      ),
+                      const SizedBox(height: 15),
+                      ListView.separated(
+                          shrinkWrap: true,
+                          padding: const EdgeInsets.only(left: 20, right: 20),
+                          itemBuilder: (context, index) {
+                            return Container(
+                                height: 100,
+                                decoration: BoxDecoration(
+                                    color: popularDiets[index].viewIsSelected
+                                        ? Colors.white
+                                        : Colors.transparent,
+                                    borderRadius: BorderRadius.circular(10),
+                                    boxShadow:
+                                        popularDiets[index].viewIsSelected
+                                            ? const [
+                                                BoxShadow(
+                                                    color: Colors.black87,
+                                                    offset: Offset(0, 10),
+                                                    blurRadius: 40,
+                                                    spreadRadius: 0)
+                                              ]
+                                            : []),
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceEvenly,
+                                  children: [
+                                    Image.asset('assets/meat.jpeg',
+                                        width: 80,
+                                        height: 80,
+                                        fit: BoxFit.cover),
+                                    Column(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          popularDiets[index].name,
+                                          style: const TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            color: Colors.black,
+                                            fontSize: 16,
+                                          ),
+                                        ),
+                                        Text(
+                                            '${diets[index].level} | ${diets[index].duration} | ${diets[index].calorie}',
+                                            style: const TextStyle(
+                                              fontWeight: FontWeight.normal,
+                                              color: Colors.grey,
+                                              fontSize: 16,
+                                            ))
+                                      ],
+                                    ),
+                                    GestureDetector(
+                                        onTap: () {},
+                                        child: Image.asset(
+                                            'assets/right-arrow.png',
+                                            height: 20,
+                                            width: 20))
+                                  ],
+                                ));
+                          },
+                          separatorBuilder: (context, index) =>
+                              const SizedBox(height: 25),
+                          itemCount: popularDiets.length),
+                    ],
+                  )
+                ],
+              ),
+              Resto(),
+              new Container(
+                color: Colors.lightGreen,
+              ),
+            ],
+          )),
+    );
   }
 
   Column _dietSection() {
@@ -126,7 +149,7 @@ class HomePage extends StatelessWidget {
         const Padding(
             padding: EdgeInsets.only(left: 20),
             child: Text(
-              'Recommendation \n for meals',
+              'Featured \n Restaurants',
               style: TextStyle(
                   color: Colors.black,
                   fontSize: 18,
@@ -200,9 +223,9 @@ class HomePage extends StatelessWidget {
         const Padding(
           padding: EdgeInsets.only(left: 20),
           child: Text(
-            'Category',
+            'Categories',
             style: TextStyle(
-                color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold),
+                color: Colors.black, fontSize: 18, fontWeight: FontWeight.bold),
           ),
         ),
         const SizedBox(height: 20),
@@ -229,7 +252,12 @@ class HomePage extends StatelessWidget {
                           ),
                           child: Padding(
                             padding: const EdgeInsets.all(10.0),
-                            child: Image.asset('assets/meat.jpeg'),
+                            child: Image.asset(
+                              'assets/meat.jpeg',
+                              fit: BoxFit.cover,
+                              // height: 10,
+                              // width: 10
+                            ),
                           ),
                         ),
                         Text(categories[index].name,
