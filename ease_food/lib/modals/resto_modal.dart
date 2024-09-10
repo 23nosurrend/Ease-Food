@@ -1,35 +1,32 @@
+import 'dart:ffi';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 class RestoModal {
+  int id;
   String name;
   String iconPath;
   String location;
   String delivery;
 
   RestoModal(
-      {required this.name, required this.iconPath, required this.location, required this.delivery});
+      {required this.id,required this.name,
+      required this.iconPath,
+      required this.location,
+      required this.delivery});
+  factory RestoModal.fromMap(Map<String, dynamic> data) {
+    return RestoModal(
+      id:data['id'],
+      name: data['name'],
+      iconPath: data['iconpath'],
+      location: data['location'],
+      delivery: data['delivery'],
+    );
+  }
 
-    
-
-  static List<RestoModal> getResto() {
-    List<RestoModal> restos = [];
-
-    restos.add(RestoModal(
-        name: '67 Athil Hotel',
-        delivery: 'Free Delivery ',
-        iconPath: 'assets/resto.png',
-        location: 'Remera-LANDO'));
-        restos.add(RestoModal(
-        name: '67 Athil Hotel',
-        delivery: 'Free Delivery ',
-        iconPath: 'assets/resto.png',
-        location: 'DOWNTOWN-NYARUGENGE'));
-        restos.add(RestoModal(
-        name: 'K67 Top10 Hotel',
-        delivery: 'Free Delivery ',
-        iconPath: 'assets/resto.png',
-        location: 'KACYIRU-GASABO'));
-    return restos;
+  @override
+  String toString() {
+    return 'RestolModal(id:$id,name:$name,iconPath:$iconPath,location:$location,delivery:$delivery)';
   }
 }
