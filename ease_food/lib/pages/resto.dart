@@ -1,7 +1,9 @@
+import 'package:ease_food/main.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import '../modals/resto_modal.dart';
+import './singleResto.dart';
 
 class Resto extends StatefulWidget {
   Resto({super.key});
@@ -11,19 +13,46 @@ class Resto extends StatefulWidget {
 }
 
 class _RestoState extends State<Resto> {
-  
   List<RestoModal> restos = [];
+  List<RestoModal> filteredResto = [];
+  TextEditingController searchController = TextEditingController();
 
   void initState() {
     super.initState();
     getInitInfo();
+    searchController.addListener(_filterResto);
   }
 
   @override
-  void getInitInfo() {
-    restos = RestoModal.getResto();
+  Future<void> getInitInfo() async {
+    try {
+      final response = await supabase.from('restos').select();
+
+      if (response.isNotEmpty) {
+        final List<dynamic> data = response;
+        setState(() {
+          restos = data.map((item) => RestoModal.fromMap(item)).toList();
+          filteredResto = restos;
+        });
+
+        print('this is teh data //////////////////// $restos');
+        print(restos[0].name);
+      }
+    } catch (error) {
+      print('Error while fetching restos:$error');
+    }
+  }
+
+  void _filterResto() {
+    final query = searchController.text.toLowerCase();
     setState(() {
-      
+      if (query.isEmpty) {
+        filteredResto = restos;
+      } else {
+        filteredResto = restos
+            .where((resto) => resto.name.toLowerCase().contains(query))
+            .toList();
+      }
     });
   }
 
@@ -33,136 +62,133 @@ class _RestoState extends State<Resto> {
     return Container(
       child: ListView(children: [
         Container(
-      margin: const EdgeInsets.fromLTRB(20, 20, 20, 20),
-      decoration: BoxDecoration(boxShadow: [
-        BoxShadow(
-            color: const Color.fromARGB(0, 121, 121, 163).withOpacity(0.11),
-            blurRadius: 10,
-            spreadRadius: 0.0)
-      ]),
-      child: TextField(
-        decoration: InputDecoration(
-          filled: true,
-          fillColor: Colors.white,
-          contentPadding: const EdgeInsets.all(20),
-          prefixIcon: Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: SvgPicture.asset('assets/search.svg'),
-          ),
-          suffixIcon: Container(
-            width: 100,
-            child: IntrinsicHeight(
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  const VerticalDivider(
-                    color: Colors.grey,
-                    indent: 10,
-                    endIndent: 10,
-                    thickness: 1.0,
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: SvgPicture.asset('assets/more.svg'),
-                  ),
-                ],
+          margin: const EdgeInsets.fromLTRB(20, 20, 20, 20),
+          decoration: BoxDecoration(boxShadow: [
+            BoxShadow(
+                color: const Color.fromARGB(0, 121, 121, 163).withOpacity(0.11),
+                blurRadius: 10,
+                spreadRadius: 0.0)
+          ]),
+          child: TextField(
+            controller: searchController,
+            decoration: InputDecoration(
+              filled: true,
+              fillColor: Colors.white,
+              contentPadding: const EdgeInsets.all(20),
+              prefixIcon: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: SvgPicture.asset('assets/search.svg'),
               ),
+              suffixIcon: Container(
+                width: 100,
+                child: IntrinsicHeight(
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      const VerticalDivider(
+                        color: Colors.grey,
+                        indent: 10,
+                        endIndent: 10,
+                        thickness: 1.0,
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: SvgPicture.asset('assets/more.svg'),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              hintText: 'Search Resto name',
+              hintStyle: const TextStyle(color: Colors.black, fontSize: 16),
+              border:
+                  OutlineInputBorder(borderRadius: BorderRadius.circular(15)),
             ),
           ),
-          hintText: 'Search Rest name',
-          hintStyle: const TextStyle(color: Colors.black, fontSize: 16),
-          border: OutlineInputBorder(borderRadius: BorderRadius.circular(15)),
         ),
-      ),
-    ),
         const SizedBox(height: 10),
         Column(
-           crossAxisAlignment: CrossAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-             ListView.separated(
+            ListView.separated(
                 shrinkWrap: true,
                 physics: NeverScrollableScrollPhysics(),
                 separatorBuilder: (context, index) => SizedBox(height: 10),
-                itemCount: restos.length,
+                itemCount: filteredResto.length,
                 itemBuilder: (context, index) {
                   return Padding(
-                    padding: EdgeInsets.only(left: 20,right: 20),
+                    padding: EdgeInsets.only(left: 20, right: 20),
                     child: Container(
                       width: 240,
-                     
                       decoration: BoxDecoration(
-                        color:Colors.white,
-                        border:Border(
-                          left: BorderSide(color:Colors.grey)
-                        )
-                      ),
-                    
-                      
-                      
+                          color: Colors.white,
+                          border: Border(left: BorderSide(color: Colors.grey))),
                       child: Column(
-                         crossAxisAlignment: CrossAxisAlignment.center,
-                       
+                        crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
                           Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children:[ Image.asset(restos[index].iconPath,
-                            height:200,
-                           
-                            fit: BoxFit.cover,
-                            ),]
-                          ),
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Image.network(
+                                  filteredResto[index].iconPath,
+                                  height: 200,
+                                  fit: BoxFit.cover,
+                                ),
+                              ]),
                           Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children:[Text(restos[index].name,
-                            style: TextStyle(
-                              fontSize: 18,
-                              color:Colors.black,
-                              fontWeight: FontWeight.bold
-                            ),
-                            ),]
-                          ),
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Text(
+                                  filteredResto[index].name,
+                                  style: TextStyle(
+                                      fontSize: 18,
+                                      color: Colors.black,
+                                      fontWeight: FontWeight.bold),
+                                ),
+                              ]),
                           Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              Text(restos[index].location,
-                              style: TextStyle(
-                                 fontSize: 18,
+                              Text(
+                                filteredResto[index].location,
+                                style: TextStyle(
+                                    fontSize: 18,
                                     color: Colors.grey,
-                                    fontWeight: FontWeight.w500
-                    
-                              ),
+                                    fontWeight: FontWeight.w500),
                               ),
                             ],
                           ),
                           SizedBox(
-                            width:250,
+                            width: 250,
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 Text(
-                                  restos[index].delivery,
+                                  filteredResto[index].delivery,
                                   style: TextStyle(
-                                    fontSize: 16,
-                                    color: Colors.black,
-                                    fontWeight: FontWeight.w400
-                                  ),
+                                      fontSize: 16,
+                                      color: Colors.black,
+                                      fontWeight: FontWeight.w400),
                                 ),
                                 TextButton(
-                                  style: ButtonStyle(
-                                    backgroundColor: WidgetStateProperty.all<Color>(Color(0xff633631))
-                                  ),
-                                  onPressed:(){}, 
-                                child:Text('View More',
-                                style:TextStyle(
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.bold
-                                )
-                                
-                                ) )
+                                    style: ButtonStyle(
+                                        backgroundColor:
+                                            WidgetStateProperty.all<Color>(
+                                                Color(0xff633631))),
+                                    onPressed: () {
+                                      Navigator.pushReplacement(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (context) =>
+                                                  SingleResto(restoId: filteredResto[index].id,)));
+                                    },
+                                    child: Text('View More',
+                                        style: TextStyle(
+                                            color: Colors.white,
+                                            fontWeight: FontWeight.bold)))
                               ],
                             ),
                           ),
-                          
                           const SizedBox(height: 10)
                         ],
                       ),
@@ -171,7 +197,6 @@ class _RestoState extends State<Resto> {
                 })
           ],
         )
-       
       ]),
     );
   }

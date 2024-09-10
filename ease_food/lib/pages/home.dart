@@ -4,6 +4,7 @@ import 'package:ease_food/modals/popular_dietModal.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import './resto.dart';
+import './shimmer.dart';
 
 class HomePage extends StatelessWidget {
   HomePage({super.key});
@@ -133,9 +134,10 @@ class HomePage extends StatelessWidget {
                 ],
               ),
               Resto(),
-              new Container(
-                color: Colors.lightGreen,
-              ),
+              ExampleUiLoadingAnimation()
+              // new Container(
+              //   color: Colors.lightGreen,
+              // ),
             ],
           )),
     );

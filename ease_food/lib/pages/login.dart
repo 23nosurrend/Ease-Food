@@ -12,6 +12,7 @@ class Login extends StatefulWidget {
 }
 
 class _LoginState extends State<Login> {
+     bool _isObscure = true;
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
   Future<void> Login() async {
@@ -35,12 +36,25 @@ class _LoginState extends State<Login> {
         showDialog(
             context: context,
             builder: (context) {
-              return AlertDialog(content: Text('Logged in Successfully'));
+              return AlertDialog(content: Text('LOgin Successfully'));
             });
         Navigator.pushReplacement(
             context, MaterialPageRoute(builder: (context) => HomePage()));
       }
     } catch (error) {
+      if (error is AuthException) {
+        showDialog(
+            context: context,
+            builder: (context) {
+              return AlertDialog(content: Text(error.message));
+            });
+      }else{
+        showDialog(
+            context: context,
+            builder: (context) {
+              return AlertDialog(content: Text('Server side error'));
+            });
+      }
       print(error);
     }
   }
@@ -127,13 +141,28 @@ class _LoginState extends State<Login> {
                 ),
                 const SizedBox(height: 60),
                 SizedBox(
-                  width: 350,
-                  child: TextField(
-                    controller: passwordController,
-                    decoration: InputDecoration(
-                        border: OutlineInputBorder(), labelText: 'Password'),
-                  ),
-                ),
+  width: 350,
+  child: TextField(
+    controller: passwordController,
+    obscureText: _isObscure, // Controls if the password is shown or hidden
+    decoration: InputDecoration(
+      border: OutlineInputBorder(),
+      labelText: 'Password',
+      suffixIcon: IconButton(
+        icon: Icon(
+          _isObscure ? Icons.visibility : Icons.visibility_off, // Toggles the eye icon
+        ),
+        onPressed: () {
+          setState(() {
+            _isObscure = !_isObscure; // Switches between hiding and showing the password
+          });
+        },
+      ),
+    ),
+  ),
+),
+
+              
                 const SizedBox(height: 60),
                 SizedBox(
                     width: 350,
@@ -145,11 +174,11 @@ class _LoginState extends State<Login> {
                                 const Color(0xff633631)),
                           ),
                           onPressed: () {
-                            // Login();
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => HomePage()));
+                            Login();
+                            // Navigator.push(
+                            //     context,
+                            //     MaterialPageRoute(
+                            //         builder: (context) => HomePage()));
                           },
                           child: const Text("Login",
                               style: TextStyle(

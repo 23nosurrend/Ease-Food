@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import './login.dart';
 import '../main.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:show_hide_password/show_hide_password.dart';
 
 class Signup extends StatefulWidget {
   const Signup({super.key});
@@ -11,11 +12,12 @@ class Signup extends StatefulWidget {
 }
 
 class _SignupState extends State<Signup> {
+   bool _isObscure = true;
   final emailController = TextEditingController();
-  final passwordontroller = TextEditingController();
+  final passwordController = TextEditingController();
   Future<void> signup() async {
     try {
-      if (emailController.text.isEmpty || passwordontroller.text.isEmpty) {
+      if (emailController.text.isEmpty || passwordController.text.isEmpty) {
         showDialog(
             context: context,
             builder: (context) {
@@ -25,7 +27,7 @@ class _SignupState extends State<Signup> {
       }
       final AuthResponse res = await supabase.auth.signUp(
         email: emailController.text,
-        password: passwordontroller.text,
+        password: passwordController.text,
       );
       final Session? session = res.session;
       final User? user = res.user;
@@ -129,13 +131,26 @@ class _SignupState extends State<Signup> {
                 ),
                 const SizedBox(height: 60),
                 SizedBox(
-                  width: 350,
-                  child: TextField(
-                    controller: passwordontroller,
-                    decoration: InputDecoration(
-                        border: OutlineInputBorder(), labelText: 'Password'),
-                  ),
-                ),
+  width: 350,
+  child: TextField(
+    controller: passwordController,
+    obscureText: _isObscure, // Controls if the password is shown or hidden
+    decoration: InputDecoration(
+      border: OutlineInputBorder(),
+      labelText: 'Password',
+      suffixIcon: IconButton(
+        icon: Icon(
+          _isObscure ? Icons.visibility : Icons.visibility_off, // Toggles the eye icon
+        ),
+        onPressed: () {
+          setState(() {
+            _isObscure = !_isObscure; // Switches between hiding and showing the password
+          });
+        },
+      ),
+    ),
+  ),
+),
                 const SizedBox(height: 60),
                 SizedBox(
                     width: 350,
@@ -163,3 +178,5 @@ class _SignupState extends State<Signup> {
     );
   }
 }
+
+
