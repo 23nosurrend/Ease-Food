@@ -1,5 +1,4 @@
 import 'package:ease_food/main.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import '../modals/resto_modal.dart';
@@ -176,7 +175,7 @@ class _RestoState extends State<Resto> {
                                             WidgetStateProperty.all<Color>(
                                                 Color(0xff633631))),
                                     onPressed: () {
-                                      Navigator.pushReplacement(
+                                      Navigator.push(
                                           context,
                                           MaterialPageRoute(
                                               builder: (context) =>
