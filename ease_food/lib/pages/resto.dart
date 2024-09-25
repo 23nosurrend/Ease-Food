@@ -26,6 +26,7 @@ class _RestoState extends State<Resto> {
   @override
   Future<void> getInitInfo() async {
     try {
+      final supabase = Supabase.instance.client;
       final response = await supabase.from('restos').select();
 
       if (response.isNotEmpty) {
@@ -35,7 +36,7 @@ class _RestoState extends State<Resto> {
           filteredResto = restos;
         });
 
-        print('this is teh data //////////////////// $restos');
+        print('this is the data //////////////////// $restos');
         print(restos[0].name);
       }
     } catch (error) {
@@ -132,6 +133,7 @@ class _RestoState extends State<Resto> {
                                 Image.network(
                                   filteredResto[index].iconPath,
                                   height: 200,
+                                  width:MediaQuery.of(context).size.width*0.7,
                                   fit: BoxFit.cover,
                                 ),
                               ]),
@@ -176,7 +178,7 @@ class _RestoState extends State<Resto> {
                                             WidgetStateProperty.all<Color>(
                                                 Color(0xff633631))),
                                     onPressed: () {
-                                      Navigator.pushReplacement(
+                                      Navigator.push(
                                           context,
                                           MaterialPageRoute(
                                               builder: (context) =>

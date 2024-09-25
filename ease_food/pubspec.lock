@@ -129,6 +129,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "7.0.0"
+  fixnum:
+    dependency: transitive
+    description:
+      name: fixnum
+      sha256: "25517a4deb0c03aa0f32fd12db525856438902d9c16536311e76cdc57b31d7d1"
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.1.0"
   flutter:
     dependency: "direct main"
     description: flutter
@@ -248,6 +256,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "4.0.0"
+  logging:
+    dependency: transitive
+    description:
+      name: logging
+      sha256: "623a88c9594aa774443aa3eb2d41807a48486b5613e67599fb4c41c0ad47c340"
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.2.0"
   matcher:
     dependency: transitive
     description:
@@ -376,6 +392,22 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.1.4"
+  powersync:
+    dependency: "direct main"
+    description:
+      name: powersync
+      sha256: a949df54395696a8f2dd606a53d72af7ce44393ef049359087fc81507b241996
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.5.3"
+  powersync_flutter_libs:
+    dependency: transitive
+    description:
+      name: powersync_flutter_libs
+      sha256: "449063aa4956c6be215ea7dfb9cc61255188e82cf7bc3f75621796fcc6615b70"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.1.0"
   realtime_client:
     dependency: transitive
     description:
@@ -477,6 +509,38 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.10.0"
+  sprintf:
+    dependency: transitive
+    description:
+      name: sprintf
+      sha256: "1fc9ffe69d4df602376b52949af107d8f5703b77cda567c4d7d86a0693120f23"
+      url: "https://pub.dev"
+    source: hosted
+    version: "7.0.0"
+  sqlite3:
+    dependency: transitive
+    description:
+      name: sqlite3
+      sha256: "45f168ae2213201b54e09429ed0c593dc2c88c924a1488d6f9c523a255d567cb"
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.4.6"
+  sqlite3_flutter_libs:
+    dependency: transitive
+    description:
+      name: sqlite3_flutter_libs
+      sha256: "62bbb4073edbcdf53f40c80775f33eea01d301b7b81417e5b3fb7395416258c1"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.5.24"
+  sqlite_async:
+    dependency: transitive
+    description:
+      name: sqlite_async
+      sha256: "7c121bd76b9063cd8189ce54512f243709c88addeced0f3d027eea5db64d3220"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.7.0"
   stack_trace:
     dependency: transitive
     description:
@@ -613,6 +677,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "3.1.2"
+  uuid:
+    dependency: transitive
+    description:
+      name: uuid
+      sha256: f33d6bb662f0e4f79dcd7ada2e6170f3b3a2530c28fc41f49a411ddedd576a77
+      url: "https://pub.dev"
+    source: hosted
+    version: "4.5.0"
   vector_graphics:
     dependency: transitive
     description:

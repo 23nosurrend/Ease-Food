@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import './login.dart';
 import '../main.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-import 'package:show_hide_password/show_hide_password.dart';
 
 class Signup extends StatefulWidget {
   const Signup({super.key});
@@ -25,6 +24,7 @@ class _SignupState extends State<Signup> {
             });
         return;
       }
+      final supabase = Supabase.instance.client;
       final AuthResponse res = await supabase.auth.signUp(
         email: emailController.text,
         password: passwordController.text,

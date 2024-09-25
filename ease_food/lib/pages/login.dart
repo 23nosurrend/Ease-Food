@@ -6,6 +6,7 @@ import './signup.dart';
 
 class Login extends StatefulWidget {
   const Login({super.key});
+  
 
   @override
   State<Login> createState() => _LoginState();
@@ -25,6 +26,7 @@ class _LoginState extends State<Login> {
             });
         return;
       }
+      final supabase = Supabase.instance.client;
       final AuthResponse res = await supabase.auth.signInWithPassword(
         email: emailController.text,
         password: passwordController.text,
