@@ -156,8 +156,8 @@ class _SingleRestoState extends State<SingleResto> {
                                     IconButton(
                                         onPressed: () {
                                           print('yes');
-                                          Navigator.pushNamed(
-                                              context,'/Singlefood');
+                                          Navigator.push(
+                                              context,MaterialPageRoute(builder:(context) =>Singlefood(foodId: meal['id']) ,));
                                         },
                                         icon: Icon(Icons.forward_10_outlined))
                                   ],

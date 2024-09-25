@@ -24,6 +24,7 @@ class _SignupState extends State<Signup> {
             });
         return;
       }
+      final supabase = Supabase.instance.client;
       final AuthResponse res = await supabase.auth.signUp(
         email: emailController.text,
         password: passwordController.text,

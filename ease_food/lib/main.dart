@@ -8,30 +8,31 @@ import './pages/login.dart';
 import './pages/singleFood.dart';
 
 Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
   await dotenv.load(fileName: ".env");
   await Supabase.initialize(
     url: dotenv.env['supabaseUrl'] ?? '',
     anonKey: dotenv.env['supabaseKey'] ?? '',
   );
-  print('Supabase URL //////////////////: ${dotenv.env['supabaseUrl']}');
-  runApp(MaterialApp(
-    initialRoute: '/',
-    routes: {
-      '/': (context) => const Splash(),
-      '/home': (context) => HomePage(),
-      '/signup': (context) => const Signup(),
-      'login': (context) => const Login(),
-      '/Singlefood':(context)=>const Singlefood()
-      // '/singleResto': (context) => const SingleResto(restoId:,)
-    },
-  ));
+
+  runApp(MyApp());
 }
 
-final supabase = Supabase.instance.client;
+class MyApp extends StatelessWidget {
+  const MyApp({Key? key}) : super(key: key);
 
-
-
-
-
-
-         
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'My Supabase App',
+      initialRoute: '/',
+      routes: {
+        '/': (context) => const Splash(),
+        '/home': (context) => HomePage(),
+        '/signup': (context) => const Signup(),
+        '/login': (context) => const Login(),
+        // '/Singlefood':(context) => const Singlefood()
+      },
+    );
+  }
+}
