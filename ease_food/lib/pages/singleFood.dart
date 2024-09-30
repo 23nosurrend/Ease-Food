@@ -1,4 +1,5 @@
 import 'package:ease_food/main.dart';
+import 'package:ease_food/pages/order.dart';
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -221,7 +222,15 @@ class _SinglefoodState extends State<Singlefood> {
                                                   WidgetStateProperty.all<
                                                           Color>(
                                                       const Color(0xffD42323))),
-                                          onPressed: () {},
+                                          onPressed: () {
+                                            print('yes');
+                                            Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      Orders(),
+                                                ));
+                                          },
                                           child: Text(
                                             ' Procced to Pay ${foodData!['food_price']}',
                                             style: TextStyle(

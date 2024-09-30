@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import '../modals/resto_modal.dart';
 import './singleResto.dart';
+import '../powersync.dart';
 
 class Resto extends StatefulWidget {
   Resto({super.key});
@@ -19,6 +20,7 @@ class _RestoState extends State<Resto> {
 
   void initState() {
     super.initState();
+    // openDatabase();
     getInitInfo();
     searchController.addListener(_filterResto);
   }
@@ -111,91 +113,126 @@ class _RestoState extends State<Resto> {
         Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            ListView.separated(
-                shrinkWrap: true,
-                physics: NeverScrollableScrollPhysics(),
-                separatorBuilder: (context, index) => SizedBox(height: 10),
-                itemCount: filteredResto.length,
-                itemBuilder: (context, index) {
-                  return Padding(
-                    padding: EdgeInsets.only(left: 20, right: 20),
-                    child: Container(
-                      width: 240,
-                      decoration: BoxDecoration(
-                          color: Colors.white,
-                          border: Border(left: BorderSide(color: Colors.grey))),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
+            StreamBuilder<List<RestoModal>>(
+                stream: RestoModal.watchRestaurants(), // The PowerSync method
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return CircularProgressIndicator();
+                  }
+
+                  if (snapshot.hasError) {
+                    return Text('Error: ${snapshot.error}');
+                  }
+
+                  final restos = snapshot.data ?? [];
+
+                  // Filtering the restaurants based on search query
+                  final filteredResto = restos.where((resto) {
+                    return resto.name
+                        .toLowerCase()
+                        .contains(searchController.text.toLowerCase());
+                  }).toList();
+
+                  if (filteredResto.isEmpty) {
+                    return Text('No restaurants found');
+                  }
+                  return ListView.separated(
+                      shrinkWrap: true,
+                      physics: NeverScrollableScrollPhysics(),
+                      separatorBuilder: (context, index) =>
+                          SizedBox(height: 10),
+                      itemCount: filteredResto.length,
+                      itemBuilder: (context, index) {
+                        return Padding(
+                          padding: EdgeInsets.only(left: 20, right: 20),
+                          child: Container(
+                            width: 240,
+                            decoration: BoxDecoration(
+                                color: Colors.white,
+                                border: Border(
+                                    left: BorderSide(color: Colors.grey))),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.center,
                               children: [
-                                Image.network(
-                                  filteredResto[index].iconPath,
-                                  height: 200,
-                                  width:MediaQuery.of(context).size.width*0.7,
-                                  fit: BoxFit.cover,
-                                ),
-                              ]),
-                          Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Text(
-                                  filteredResto[index].name,
-                                  style: TextStyle(
-                                      fontSize: 18,
-                                      color: Colors.black,
-                                      fontWeight: FontWeight.bold),
-                                ),
-                              ]),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Text(
-                                filteredResto[index].location,
-                                style: TextStyle(
-                                    fontSize: 18,
-                                    color: Colors.grey,
-                                    fontWeight: FontWeight.w500),
-                              ),
-                            ],
-                          ),
-                          SizedBox(
-                            width: 250,
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Text(
-                                  filteredResto[index].delivery,
-                                  style: TextStyle(
-                                      fontSize: 16,
-                                      color: Colors.black,
-                                      fontWeight: FontWeight.w400),
-                                ),
-                                TextButton(
-                                    style: ButtonStyle(
-                                        backgroundColor:
-                                            WidgetStateProperty.all<Color>(
-                                                Color(0xff633631))),
-                                    onPressed: () {
-                                      Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                              builder: (context) =>
-                                                  SingleResto(restoId: filteredResto[index].id,)));
-                                    },
-                                    child: Text('View More',
+                                Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Image.network(
+                                        filteredResto[index].iconPath,
+                                        height: 200,
+                                        width:
+                                            MediaQuery.of(context).size.width *
+                                                0.7,
+                                        fit: BoxFit.cover,
+                                      ),
+                                    ]),
+                                Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Text(
+                                        filteredResto[index].name,
                                         style: TextStyle(
-                                            color: Colors.white,
-                                            fontWeight: FontWeight.bold)))
+                                            fontSize: 18,
+                                            color: Colors.black,
+                                            fontWeight: FontWeight.bold),
+                                      ),
+                                    ]),
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Text(
+                                      filteredResto[index].location,
+                                      style: TextStyle(
+                                          fontSize: 18,
+                                          color: Colors.grey,
+                                          fontWeight: FontWeight.w500),
+                                    ),
+                                  ],
+                                ),
+                                SizedBox(
+                                  width: 250,
+                                  child: Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Text(
+                                        filteredResto[index].delivery,
+                                        style: TextStyle(
+                                            fontSize: 16,
+                                            color: Colors.black,
+                                            fontWeight: FontWeight.w400),
+                                      ),
+                                      TextButton(
+                                          style: ButtonStyle(
+                                              backgroundColor:
+                                                  WidgetStateProperty.all<
+                                                          Color>(
+                                                      Color(0xff633631))),
+                                          onPressed: () {
+                                            Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                    builder: (context) =>
+                                                        SingleResto(
+                                                          restoId:
+                                                              filteredResto[
+                                                                      index]
+                                                                  .id,
+                                                        )));
+                                          },
+                                          child: Text('View More',
+                                              style: TextStyle(
+                                                  color: Colors.white,
+                                                  fontWeight: FontWeight.bold)))
+                                    ],
+                                  ),
+                                ),
+                                const SizedBox(height: 10)
                               ],
                             ),
                           ),
-                          const SizedBox(height: 10)
-                        ],
-                      ),
-                    ),
-                  );
+                        );
+                      });
                 })
           ],
         )
