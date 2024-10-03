@@ -30,13 +30,13 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'My Supabase App',
-      initialRoute: '/payment',
+      initialRoute: '/',
       routes: {
-        '/kkk': (context) => const Splash(),
+        '/': (context) => const Splash(),
         '/home': (context) => HomePage(),
         '/signup': (context) => const Signup(),
         '/login': (context) => const Login(),
-        '/order': (context) => const Orders(),
+        // '/order': (context) => const Orders(),
         '/payment':(context)=>const Payment()
         // '/Singlefood':(context) => const Singlefood()
       },

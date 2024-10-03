@@ -6,23 +6,29 @@ import './signup.dart';
 
 class Login extends StatefulWidget {
   const Login({super.key});
-  
 
   @override
   State<Login> createState() => _LoginState();
 }
 
 class _LoginState extends State<Login> {
-     bool _isObscure = true;
+  bool _isLoading = false;
+  bool _isObscure = true;
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
-  Future<void> Login() async {
+
+  Future<void> login() async {
+    setState(() {
+      _isLoading = true; // Show loading indicator
+    });
+
     try {
       if (emailController.text.isEmpty || passwordController.text.isEmpty) {
         showDialog(
             context: context,
             builder: (context) {
-              return AlertDialog(content: Text('Please Enter all inputs'));
+              return const AlertDialog(
+                  content: Text('Please Enter all inputs'));
             });
         return;
       }
@@ -38,7 +44,7 @@ class _LoginState extends State<Login> {
         showDialog(
             context: context,
             builder: (context) {
-              return AlertDialog(content: Text('LOgin Successfully'));
+              return const AlertDialog(content: Text('Login Successfully'));
             });
         Navigator.pushReplacement(
             context, MaterialPageRoute(builder: (context) => HomePage()));
@@ -50,14 +56,18 @@ class _LoginState extends State<Login> {
             builder: (context) {
               return AlertDialog(content: Text(error.message));
             });
-      }else{
+      } else {
         showDialog(
             context: context,
             builder: (context) {
-              return AlertDialog(content: Text('Server side error'));
+              return const AlertDialog(content: Text('Server side error'));
             });
       }
       print(error);
+    } finally {
+      setState(() {
+        _isLoading = false; // Hide loading indicator
+      });
     }
   }
 
@@ -137,57 +147,61 @@ class _LoginState extends State<Login> {
                   width: 350,
                   child: TextField(
                     controller: emailController,
-                    decoration: InputDecoration(
+                    decoration: const InputDecoration(
                         border: OutlineInputBorder(), labelText: 'Email'),
                   ),
                 ),
                 const SizedBox(height: 60),
                 SizedBox(
-  width: 350,
-  child: TextField(
-    controller: passwordController,
-    obscureText: _isObscure, // Controls if the password is shown or hidden
-    decoration: InputDecoration(
-      border: OutlineInputBorder(),
-      labelText: 'Password',
-      suffixIcon: IconButton(
-        icon: Icon(
-          _isObscure ? Icons.visibility : Icons.visibility_off, // Toggles the eye icon
-        ),
-        onPressed: () {
-          setState(() {
-            _isObscure = !_isObscure; // Switches between hiding and showing the password
-          });
-        },
-      ),
-    ),
-  ),
-),
-
-              
+                  width: 350,
+                  child: TextField(
+                    controller: passwordController,
+                    obscureText:
+                        _isObscure, // Controls if the password is shown or hidden
+                    decoration: InputDecoration(
+                      border: const OutlineInputBorder(),
+                      labelText: 'Password',
+                      suffixIcon: IconButton(
+                        icon: Icon(
+                          _isObscure
+                              ? Icons.visibility
+                              : Icons.visibility_off, // Toggles the eye icon
+                        ),
+                        onPressed: () {
+                          setState(() {
+                            _isObscure =
+                                !_isObscure; // Switches between hiding and showing the password
+                          });
+                        },
+                      ),
+                    ),
+                  ),
+                ),
                 const SizedBox(height: 60),
                 SizedBox(
-                    width: 350,
-                    child: SizedBox(
-                      height: 70,
-                      child: TextButton(
-                          style: ButtonStyle(
-                            backgroundColor: WidgetStateProperty.all<Color>(
-                                const Color(0xff633631)),
+                  width: 350,
+                  child: _isLoading
+                      ? const Center(
+                          child:
+                              CircularProgressIndicator()) // Show loader when login is in progress
+                      : SizedBox(
+                          height: 70,
+                          child: TextButton(
+                            style: ButtonStyle(
+                              backgroundColor: MaterialStateProperty.all<Color>(
+                                  const Color(0xff633631)),
+                            ),
+                            onPressed: () {
+                              login();
+                            },
+                            child: const Text("Login",
+                                style: TextStyle(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 18)),
                           ),
-                          onPressed: () {
-                            Login();
-                            // Navigator.push(
-                            //     context,
-                            //     MaterialPageRoute(
-                            //         builder: (context) => HomePage()));
-                          },
-                          child: const Text("Login",
-                              style: TextStyle(
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 18))),
-                    ))
+                        ),
+                ),
               ],
             ),
           ),

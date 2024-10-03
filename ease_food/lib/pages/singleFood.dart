@@ -15,7 +15,8 @@ class _SinglefoodState extends State<Singlefood> {
   bool _isCheked = false;
   Map<String, dynamic>? foodData;
   bool isLoading = true;
-
+  bool isAddingToCart = false;
+  final TextEditingController _descriptionController = TextEditingController();
   @override
   void initState() {
     super.initState();
@@ -32,24 +33,71 @@ class _SinglefoodState extends State<Singlefood> {
         foodData = response;
         isLoading = false;
       });
+
+      print("Added to Cart $response");
+    } catch (error) {
+      setState(() {
+        isLoading = false;
+      });
+      print('error while adding to cart $error');
+    }
+  }
+
+  Future<void> addCart(String foodid, String description, int quantity) async {
+    setState(() {
+      isAddingToCart = true;
+    });
+    try {
+      final supabase = Supabase.instance.client;
+      final response = await supabase.from('carts').insert(
+          {'foodid': foodid, 'description': description, 'quantity': quantity});
+      if (mounted) {
+        showDialog(
+            context: context,
+            builder: (context) {
+              return const AlertDialog(content: Text('Product added to Cart'));
+            }).then((_){
+              Navigator.push(
+              context, MaterialPageRoute(builder: (context) => Orders(foodid:foodid,description:description,quantity:quantity)));
+            });
+      }
+      
       print("this is food $response");
     } catch (error) {
       print('error whiel fetching singelFood $error');
+    } finally {
       setState(() {
-        isLoading = false;
+        isAddingToCart = false; // Hide progress indicator
       });
     }
   }
 
+  int quantity = 1; // Default quantity
+
+  void _incrementQuantity() {
+    setState(() {
+      quantity++;
+    });
+  }
+
+  void _decrementQuantity() {
+    if (quantity > 1) {
+      setState(() {
+        quantity--;
+      });
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Food order'),
+        title: const Text('Food order'),
       ),
       body: isLoading
-          ? Center(child: CircularProgressIndicator())
+          ? const Center(child: CircularProgressIndicator())
           : foodData == null
-              ? Center(
+              ? const Center(
                   child: Text('No food Found'),
                 )
               : SingleChildScrollView(
@@ -75,7 +123,7 @@ class _SinglefoodState extends State<Singlefood> {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Container(
+                          SizedBox(
                             width: MediaQuery.of(context).size.width * 0.9,
                             child: Column(
                               children: [
@@ -83,7 +131,7 @@ class _SinglefoodState extends State<Singlefood> {
                                   children: [
                                     Text(
                                       foodData!['food_name'],
-                                      style: TextStyle(
+                                      style: const TextStyle(
                                         fontWeight: FontWeight.bold,
                                         fontSize: 18,
                                         color: Colors.black,
@@ -92,28 +140,28 @@ class _SinglefoodState extends State<Singlefood> {
                                     )
                                   ],
                                 ),
-                                SizedBox(height: 10),
+                                const SizedBox(height: 10),
                                 Row(
                                   children: [
                                     Text(
                                       foodData!['description'],
-                                      style: TextStyle(
+                                      style: const TextStyle(
                                         color: Colors.grey,
                                         decoration: TextDecoration.none,
                                       ),
                                     )
                                   ],
                                 ),
-                                SizedBox(height: 10),
+                                const SizedBox(height: 10),
                                 Row(
                                   children: [
                                     Container(
                                       width: 150,
                                       height: 20,
-                                      decoration: BoxDecoration(
+                                      decoration: const BoxDecoration(
                                         color: Color(0xffFFCFC6),
                                       ),
-                                      child: Row(
+                                      child: const Row(
                                         mainAxisAlignment:
                                             MainAxisAlignment.center,
                                         children: [
@@ -129,18 +177,18 @@ class _SinglefoodState extends State<Singlefood> {
                                     )
                                   ],
                                 ),
-                                SizedBox(height: 10),
+                                const SizedBox(height: 10),
                                 Row(
                                   mainAxisAlignment:
                                       MainAxisAlignment.spaceBetween,
                                   children: [
-                                    Text('Additional Cookies'),
+                                    const Text('Additional Cookies'),
                                     Container(
                                       width: 80,
                                       height: 20,
-                                      decoration: BoxDecoration(
+                                      decoration: const BoxDecoration(
                                           color: Color(0xffB4E1C3)),
-                                      child: Row(
+                                      child: const Row(
                                         mainAxisAlignment:
                                             MainAxisAlignment.center,
                                         children: [
@@ -187,7 +235,7 @@ class _SinglefoodState extends State<Singlefood> {
                                     });
                                   },
                                 ),
-                                Row(
+                                const Row(
                                   children: [
                                     Text(
                                       'Add special Instructions ',
@@ -197,47 +245,108 @@ class _SinglefoodState extends State<Singlefood> {
                                     )
                                   ],
                                 ),
-                                SizedBox(height: 10),
+                                const SizedBox(height: 10),
                                 Row(
                                   children: [
                                     Expanded(
-                                      child: TextField(
-                                        decoration: InputDecoration(
-                                          border: OutlineInputBorder(),
+                                      child: Container(
+                                        height: 120,
+                                        decoration:  BoxDecoration(
+                                          borderRadius:BorderRadius.circular(8),
+                                            color: Colors.grey),
+                                        child: TextField(
+                                          controller: _descriptionController,
+                                          expands: true,
+                                          maxLines: null,
+                                          decoration: const InputDecoration(
+                                            border: OutlineInputBorder(borderSide: BorderSide.none),
+                                            fillColor: Colors.grey,
+                                            hintText: "Write here .....",
+                                          ),
+                                          style: const TextStyle(fontSize: 18),
                                         ),
-                                        style: TextStyle(fontSize: 25),
                                       ),
                                     )
                                   ],
                                 ),
-                                SizedBox(height: 10),
+                                const SizedBox(height: 20),
                                 Row(
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
-                                    SizedBox(
-                                      width: 250,
-                                      child: TextButton(
-                                          style: ButtonStyle(
-                                              backgroundColor:
-                                                  WidgetStateProperty.all<
-                                                          Color>(
-                                                      const Color(0xffD42323))),
-                                          onPressed: () {
-                                            print('yes');
-                                            Navigator.push(
-                                                context,
-                                                MaterialPageRoute(
-                                                  builder: (context) =>
-                                                      Orders(),
-                                                ));
-                                          },
-                                          child: Text(
-                                            ' Procced to Pay ${foodData!['food_price']}',
-                                            style: TextStyle(
-                                                color: Colors.white,
-                                                fontWeight: FontWeight.bold),
-                                          )),
+                                    Expanded(
+                                      child: Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceAround,
+                                        children: [
+                                          IconButton(
+                                            padding: EdgeInsets.zero,
+                                            icon: const Icon(Icons.remove),
+                                            onPressed: _decrementQuantity,
+                                          ),
+                                          SizedBox(
+                                            width: 50,
+                                            child: TextField(
+                                              textAlign: TextAlign.center,
+                                              readOnly:
+                                                  true, // Read-only, so users can't manually change the value
+                                              controller: TextEditingController(
+                                                  text: quantity.toString()),
+                                              decoration: const InputDecoration(
+                                                border: OutlineInputBorder(),
+                                                contentPadding:
+                                                    EdgeInsets.symmetric(
+                                                        vertical:
+                                                            5), // Adjust padding
+                                              ),
+                                            ),
+                                          ),
+                                          IconButton(
+                                            icon: const Icon(Icons.add),
+                                            onPressed: _incrementQuantity,
+                                          ),
+                                        ],
+                                      ),
                                     )
+                                  ],
+                                ),
+                                const SizedBox(height: 20),
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    isAddingToCart
+                                        ? const CircularProgressIndicator()
+                                        : Padding(
+                                          padding: const EdgeInsets.only(bottom: 40.0),
+                                          child: SizedBox(
+                                              width: 250,
+                                              child: TextButton(
+                                                  style: ButtonStyle(
+                                                      backgroundColor:
+                                                          WidgetStateProperty.all<
+                                                                  Color>(
+                                                              const Color(
+                                                                  0xffD42323))),
+                                                  onPressed: () {
+                                                    print('yes');
+                                                    String description =
+                                                        _descriptionController
+                                                            .text;
+                                                    addCart(
+                                                      widget.foodId,
+                                                      description,
+                                                      quantity,
+                                                    ); // Default quantity to 1
+                                                   
+                                                  },
+                                                  child: Text(
+                                                    ' Add to cart ${(quantity* double.parse(foodData!['food_price']))} RWf',
+                                                    style: const TextStyle(
+                                                        color: Colors.white,
+                                                        fontWeight:
+                                                            FontWeight.bold),
+                                                  )),
+                                            ),
+                                        )
                                   ],
                                 )
                               ],

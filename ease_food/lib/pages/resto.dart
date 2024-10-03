@@ -197,7 +197,7 @@ class _RestoState extends State<Resto> {
                                     children: [
                                       Text(
                                         filteredResto[index].delivery,
-                                        style: TextStyle(
+                                        style: const TextStyle(
                                             fontSize: 16,
                                             color: Colors.black,
                                             fontWeight: FontWeight.w400),
@@ -207,7 +207,7 @@ class _RestoState extends State<Resto> {
                                               backgroundColor:
                                                   WidgetStateProperty.all<
                                                           Color>(
-                                                      Color(0xff633631))),
+                                                      const Color(0xff633631))),
                                           onPressed: () {
                                             Navigator.push(
                                                 context,

@@ -1,20 +1,52 @@
 import 'package:flutter/material.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 import './PaymentScreen.dart';
 
 class Orders extends StatefulWidget {
-  const Orders({super.key});
+  final String foodid;
+  final String description;
+  final int quantity;
+  const Orders(
+      {super.key,
+      required this.foodid,
+      required this.description,
+      required this.quantity});
 
   @override
   State<Orders> createState() => _OrdersState();
 }
 
 class _OrdersState extends State<Orders> {
+  List<Map<String, dynamic>> cartItems = [];
+  Map<String, dynamic> foodDetails = {};
+  bool isLoading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchCartItems();
+  }
+
+  Future<void> _fetchCartItems() async {
+    try {
+      final supabase = Supabase.instance.client;
+
+      // Fetch all cart items
+      final cartResponse = await supabase.from('carts').select('*');
+      List<Map<String, dynamic>> carts =
+          List<Map<String, dynamic>>.from(cartResponse);
+      print('carts response $cartResponse');
+    } catch (e) {
+      print('Error while fetching Carts $e');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
     return Scaffold(
       appBar: AppBar(
-          title: Text(
+          title: const Text(
         'Orders',
         style: TextStyle(color: Colors.black),
       )),
@@ -41,7 +73,7 @@ class _OrdersState extends State<Orders> {
                       width: 0.3, // Border width
                     ),
                   ),
-                  child: Padding(
+                  child: const Padding(
                     padding: EdgeInsets.all(10),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -61,38 +93,38 @@ class _OrdersState extends State<Orders> {
                     ),
                   ),
                 ),
-                Text(
+                const Text(
                   '200',
                   style:
                       TextStyle(color: Colors.red, fontWeight: FontWeight.bold),
                 )
               ],
             ),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             Container(
               width: screenWidth * 0.9,
               decoration: BoxDecoration(
                   border: Border.all(color: Colors.black, width: 0.2)),
               child: Column(
                 children: [
-                  Row(
+                  const Row(
                     children: [
                       Text('Order Summary',
                           style: TextStyle(color: Colors.black, fontSize: 30))
                     ],
                   ),
-                  SizedBox(height: 20),
-                  Row(
+                  const SizedBox(height: 20),
+                  const Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [Text('Sub total'), Text('100Rwf')],
                   ),
-                  SizedBox(height: 10),
-                  Row(
+                  const SizedBox(height: 10),
+                  const Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [Text('Delivery Fees'), Text('100Rwf')],
                   ),
-                  SizedBox(height: 10),
-                  Row(
+                  const SizedBox(height: 10),
+                  const Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
@@ -109,13 +141,13 @@ class _OrdersState extends State<Orders> {
                               fontSize: 20))
                     ],
                   ),
-                  SizedBox(height: 10),
+                  const SizedBox(height: 10),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       ElevatedButton(
                           style: ElevatedButton.styleFrom(
-                            padding: EdgeInsets.symmetric(
+                            padding: const EdgeInsets.symmetric(
                                 horizontal: 20, vertical: 10), // Button padding
                             shape: RoundedRectangleBorder(
                               borderRadius:
@@ -123,8 +155,10 @@ class _OrdersState extends State<Orders> {
                             ),
                             // Button background color
                           ),
-                          onPressed: () {},
-                          child: Row(
+                          onPressed: () {
+                            Navigator.pushNamed(context, '/payment');
+                          },
+                          child: const Row(
                             mainAxisAlignment: MainAxisAlignment.spaceAround,
                             children: [
                               Text('Add Item '),
@@ -136,7 +170,7 @@ class _OrdersState extends State<Orders> {
                           ))
                     ],
                   ),
-                  SizedBox(height: 30),
+                  const SizedBox(height: 30),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
@@ -151,10 +185,10 @@ class _OrdersState extends State<Orders> {
                               Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                    builder: (context) => Payment(),
+                                    builder: (context) => const Payment(),
                                   ));
                             },
-                            child: Text(
+                            child: const Text(
                               ' Proceed to payment',
                               style: TextStyle(
                                   color: Colors.white,
