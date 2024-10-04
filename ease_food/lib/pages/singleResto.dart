@@ -157,7 +157,12 @@ class _SingleRestoState extends State<SingleResto> {
                                         onPressed: () {
                                           print('yes');
                                           Navigator.push(
-                                              context,MaterialPageRoute(builder:(context) =>Singlefood(foodId: meal['id']) ,));
+                                              context,
+                                              MaterialPageRoute(
+                                                builder: (context) =>
+                                                    Singlefood(
+                                                        foodId: meal['id']),
+                                              ));
                                         },
                                         icon: Icon(Icons.forward_10_outlined))
                                   ],
